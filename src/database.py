@@ -114,13 +114,15 @@ class Database:
             """
             UPDATE Users SET bal=? WHERE id=?
             """,
-            (new_balance, stocks.buyer_id))
+            (new_balance, stocks.buyer_id,)
+        )
 
         cur.execute(
             """
-            INSERT INTO Stocks(stock_name,amount,timestamp,buyer_id) VALUES(?,?,?,?)
+            INSERT INTO Stocks(stock_name,price,amount,timestamp,buyer_id) VALUES(?,?,?,?,?)
             """,
             (stocks.stock_name,
+             stocks.price,
              stocks.amount,
              stocks.timestamp,
              stocks.buyer_id,)
