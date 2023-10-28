@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+from .database import Database
 
 app = FastAPI()
+db = Database()
+db.up()
 
 
 @app.get("/")
