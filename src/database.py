@@ -2,9 +2,10 @@ import sqlite3
 
 
 class User:
-    def __init__(self, name: str, bal: float, id: int = None) -> None:
+    def __init__(self, username: str, password: str, bal: float, id: int = None) -> None:
         self.id = id
-        self.name = name
+        self.username = username
+        self.password = password
         self.bal = bal
 
 
@@ -18,12 +19,23 @@ class Database:
             """
     CREATE TABLE IF NOT EXISTS Users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        balance INTEGER
+        username TEXT,
+        password TEXT,
+        bal INTEGER
     )
             """
         )
         self.conn.commit()
 
-    def create_user(user: User):
-        pass
+    def create_user(self, user: User):
+        cur = self.conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO Users(username,bal)
+            VALUES(?,?)
+            """,
+            user.username,
+            user.password,
+            user.bal
+        )
+        self.conn.commit()
