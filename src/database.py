@@ -127,4 +127,4 @@ class Database:
              stocks.timestamp,
              stocks.buyer_id,)
         )
-        self.conn.commit()
+        self.conn.commit() 
