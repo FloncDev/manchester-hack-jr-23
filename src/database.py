@@ -1,5 +1,5 @@
 import sqlite3
-from models import User, Stock, ApiUser
+from .models import User, Stock, ApiUser
 
 
 class Database:

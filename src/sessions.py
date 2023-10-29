@@ -1,6 +1,6 @@
 from os import urandom
 import base64
-from models import User
+from .models import User
 from fastapi import Cookie, HTTPException
 from typing import Annotated
 
