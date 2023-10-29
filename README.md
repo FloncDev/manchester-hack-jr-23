@@ -64,7 +64,6 @@ The _News_  feature allows the user to make more informed decisions based on rec
 
 In order to add more content into the project that the user can engage with, we have added a ranking  system. The users that have signed up can actively compete against eachother for the title of the greatest investor within our project's reality-based simulation (bragging rights are included). **The leaderboard functions by sorting the users in descending order, the largest portfolio value to the lowest**. This creates a ranking from the most prosperous user to the least valued user. We believe this system is necessary for the motivation of the user.
 
-
 <br>
 <br>
 
