@@ -1,7 +1,6 @@
 # Manchester Hack Jr 2023
 ### An AJ Bell Futures Foundation inspired project:
 <br>
-
 <p align="centre">
     <img src="https://cdn.discordapp.com/attachments/1160991230210084894/1168150967489933382/gitrich.png?ex=6550b85d&is=653e435d&hm=7fdfae07b700bf3cbe78e706b6a230a5630da67a4521bf3d4546377f80f54f36&">
 </p>
