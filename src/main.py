@@ -77,6 +77,31 @@ async def sell_stock(id: int, user_id: int = Depends(sessions.verify)):
         raise HTTPException(
             401, f"That stock either does not exist or is not owned by you. {e}"
         )
+    
+@app.post("/sell-by-symbol")
+async def sell_stock_by_symbol(stock: ApiStock, user_id: int = Depends(sessions.verify)):
+    user = db.get_user_by_id(user_id)
+    
+    # Here, find the most recent purchase of the given stock for the user.
+    # This is a simplification and might need more complex logic for a real app.
+    stocks = db.find_user_stocks(user_id)
+    stocks_of_symbol = [s for s in stocks if s.stock_name == stock.stock_name]
+    
+    if not stocks_of_symbol:
+        raise HTTPException(400, f"You do not own any shares of {stock.stock_name}.")
+    
+    # Find the most recent purchase
+    recent_stock = max(stocks_of_symbol, key=lambda x: x.timestamp)
+    
+    if recent_stock.amount < stock.amount:
+        raise HTTPException(400, f"You do not own enough shares of {stock.stock_name} to sell.")
+    
+    # Use the ID of the recent stock to sell
+    try:
+        db.sell_stock(recent_stock.id, user_id)
+        return f"Sold {stock.amount} {stock.stock_name} stocks."
+    except ValueError as e:
+        raise HTTPException(401, f"That stock either does not exist or is not owned by you. {e}")
 
 @app.post("/logout")
 async def logout(response: Response):
@@ -89,11 +114,27 @@ async def get_stock(stock_name: str, _: int = Depends(sessions.verify)):
         return await stocks.get_stock_price(stock_name)
     except KeyError:
         raise HTTPException(400, "Stock could not be found")
+    
+@app.get("/top-stocks")
+async def get_top_stocks(_: int = Depends(sessions.verify)):
+    mock_stocks = [
+        {"symbol": "AAPL", "price": 168.22},
+        {"symbol": "MSFT", "price": 329.92},
+        {"symbol": "AMZN", "price": 127.74},
+        {"symbol": "TSLA", "price": 207.31},
+        {"symbol": "GME", "price": 13.15},
+        {"symbol": "MCD", "price": 255.8},
+        {"symbol": "DIS", "price": 79.33},
+        {"symbol": "NKE", "price": 97.98},
+        {"symbol": "SBUX", "price": 92.02},
+        {"symbol": "RBLX", "price": 30.99},
+    ]
+    return mock_stocks
 
 
 @app.get("/news/{stock_name}")
 async def get_news(stock_name: str, _: int = Depends(sessions.verify)):
-    pass
+    return ["Headline 1", "Headline 2"]
 
 
 app.mount("/", StaticFiles(directory="src/frontend", html=True))

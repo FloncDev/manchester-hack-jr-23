@@ -17,15 +17,39 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 25px;
+            align-items: center;
         }
 
         header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
             padding: 30px 25px;
             box-sizing: border-box;
+        }
+
+        .app-logo {
+            margin-right: 25px;
+        }
+
+        .nav-bar a {
+            text-decoration: none;
+            color: #eaeaea;
+            padding: 10px 15px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: #555;
         }
 
         button {
@@ -43,15 +67,11 @@
             background-color: #777;
         }
 
-        button#signup {
-            margin-left: 10px;
-        }
-
         .content-wrapper {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            padding: 0 10%; /* Adjust this padding for desired spacing from sides */
+            padding: 0 10%;
         }
 
         .balance, .stocks, .news-strip {
@@ -65,7 +85,7 @@
 
         .balance, .stocks {
             flex: 1;
-            margin: 20px 10px; /* Add some horizontal margin to separate the two blocks */
+            margin: 20px 10px;
         }
 
         .stocks ul {
@@ -83,5 +103,190 @@
             margin: 0;
             font-size: 0.9em;
         }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100vh - 90px);
+            padding: 0 10%;
+        }
+
+        .stock-input {
+            width: 80%;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .stock-input label, .stock-input button, .stock-input p {
+            margin-bottom: 10px;
+            width: 150px;
+        }
+
+        .stock-input input[type="text"], .stock-input input[type="number"] {
+            padding: 8px 12px;
+            background-color: #1a1a1a;
+            color: #eaeaea;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        .top-stocks {
+            width: 40%;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .top-stocks h2 {
+            margin-bottom: 20px;
+        }
+
+        .top-stocks ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .top-stocks li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
+
+<body>
+    <body>
+        <header>
+            <img src="https://media.discordapp.net/attachments/1160991230210084894/1168150967489933382/gitrich.png?ex=6550b85d&is=653e435d&hm=7fdfae07b700bf3cbe78e706b6a230a5630da67a4521bf3d4546377f80f54f36&=&width=1440&height=285" alt="Logo" class="app-logo" width="150px">
+            <nav class="nav-bar">
+                <a href="app.html">Home</a>
+                <a href="market.html">Market</a>
+                <a href="leaderboard.html">Leaderboard</a>
+            </nav>
+            <button id="logoutButton">Logout</button>
+        </header>
+    
+        <div class="content-wrapper">
+            <div class="stock-input">
+                <h2>Buy or Sell Stocks</h2>
+                <label>Stock Symbol: <input type="text" id="stockSymbol"></label>
+                <label>Amount: <input type="number" id="stockAmount" step="0.01"></label>
+                <button id="getPrice">Get Current Price</button>
+                <p id="currentPrice"></p>
+                <button id="buyStock">Buy</button>
+                <button id="sellStock">Sell</button>
+                <p id="transactionFeedback"></p>
+            </div>
+
+            <div class="top-stocks">
+                <h2>Trending Stocks</h2>
+                <ul id="stockList"></ul>
+            </div>            
+        </div>  
+
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location.href = 'index.html';
+        });
+
+        async function fetchTopStocks() {
+            try {
+                const response = await fetch('/top-stocks');
+                const stocks = await response.json();
+
+                const stockList = document.getElementById('stockList');
+                stockList.innerHTML = '';  // Clear out any previous stocks
+
+                stocks.forEach(stock => {
+                    const stockItem = document.createElement('li');
+                    stockItem.textContent = `${stock.symbol}: $${stock.price}`;
+                    stockList.appendChild(stockItem);
+                });
+
+            } catch (error) {
+                console.error('Error fetching top stocks:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('getPrice').addEventListener('click', async () => {
+                const stockSymbol = document.getElementById('stockSymbol').value;
+
+                try {
+                    const response = await fetch(`/stock/${stockSymbol}`);
+                    const data = await response.json();
+                    document.getElementById('currentPrice').textContent = `Current price of ${stockSymbol}: $${data}`;
+                } catch (error) {
+                    console.error('Error fetching stock price:', error);
+                }
+            });
+
+            document.getElementById('buyStock').addEventListener('click', async () => {
+                const stockSymbol = document.getElementById('stockSymbol').value;
+                const stockAmount = parseFloat(document.getElementById('stockAmount').value);
+
+                try {
+                    const response = await fetch('/purchase', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            stock_name: stockSymbol,
+                            amount: stockAmount
+                        })
+                    });
+
+                    if (response.ok) {
+                        const message = await response.text();
+                        document.getElementById('transactionFeedback').textContent = message;
+                    } else {
+                        const errorData = await response.json();
+                        document.getElementById('transactionFeedback').textContent = errorData.detail;
+                    }
+                } catch (error) {
+                    console.error('Error buying stock:', error);
+                    document.getElementById('transactionFeedback').textContent = 'Error buying stock. Please try again.';
+                }
+            });
+
+            document.getElementById('sellStock').addEventListener('click', async () => {
+                const stockSymbol = document.getElementById('stockSymbol').value;
+                const stockAmount = parseFloat(document.getElementById('stockAmount').value);
+
+                try {
+                    const response = await fetch('/sell-by-symbol', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            stock_name: stockSymbol,
+                            amount: stockAmount
+                        })
+                    });
+
+                    if (response.ok) {
+                        const message = await response.text();
+                        document.getElementById('transactionFeedback').textContent = message;
+                    } else {
+                        const errorData = await response.json();
+                        document.getElementById('transactionFeedback').textContent = errorData.detail;
+                    }
+                } catch (error) {
+                    console.error('Error selling stock:', error);
+                    document.getElementById('transactionFeedback').textContent = 'Error selling stock. Please try again.';
+                }
+            });
+
+            fetchTopStocks();
+
+        });
+    </script>
+</body>

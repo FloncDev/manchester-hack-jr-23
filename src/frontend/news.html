@@ -20,12 +20,36 @@
             overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
+        .nav-bar {
+            display: flex;
+            gap: 25px;  /* Increase gap between links */
+            align-items: center;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
             padding: 30px 25px;
             box-sizing: border-box;
+        }
+
+        .app-logo {
+            margin-right: 25px;  /* Added spacing next to the logo */
+        }
+
+        .nav-bar a {
+            text-decoration: none;
+            color: #eaeaea;
+            padding: 10px 15px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: #555;
         }
 
         button {
@@ -41,10 +65,6 @@
 
         button:hover {
             background-color: #777;
-        }
-
-        button#signup {
-            margin-left: 10px;
         }
 
         .content-wrapper {
@@ -85,3 +105,23 @@
         }
     </style>
 </head>
+
+<body>
+    <header>
+        <img src="https://media.discordapp.net/attachments/1160991230210084894/1168150967489933382/gitrich.png?ex=6550b85d&is=653e435d&hm=7fdfae07b700bf3cbe78e706b6a230a5630da67a4521bf3d4546377f80f54f36&=&width=1440&height=285" alt="Logo" class="app-logo" width="150px">
+        <nav class="nav-bar">
+            <a href="app.html">Home</a>
+            <a href="market.html">Market</a>
+            <a href="news.html">News</a>
+        </nav>
+        <button id="logoutButton">Logout</button>
+    </header>
+
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location.href = 'index.html';
+        });
+    </script>
+
+</body>

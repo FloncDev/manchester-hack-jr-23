@@ -20,18 +20,23 @@
             overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
+        .nav-bar {
+            display: flex;
+            gap: 25px;  /* Increase gap between links */
+            align-items: center;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;  /* Align items vertically */
+            align-items: center;
             width: 100%;
             padding: 30px 25px;
             box-sizing: border-box;
         }
 
-        .nav-bar {
-            display: flex;
-            gap: 20px;
+        .app-logo {
+            margin-right: 25px;  /* Added spacing next to the logo */
         }
 
         .nav-bar a {
@@ -107,7 +112,7 @@
         <nav class="nav-bar">
             <a href="app.html">Home</a>
             <a href="market.html">Market</a>
-            <a href="news.html">News</a>
+            <a href="leaderboard.html">Leaderboard</a>
         </nav>
         <button id="logoutButton">Logout</button>
     </header>
@@ -132,6 +137,8 @@
         <p>Stock A is on the rise due to...</p>
         <p>Stock B experienced a slight drop because...</p>
     </div>
+
+    <marquee behavior="scroll" direction="left" id="news-marquee"></marquee>
 
     <script>
         async function fetchData() {
@@ -163,6 +170,45 @@
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = 'index.html';
         });
+
+        const newsMarquee = document.getElementById('news-marquee');
+    let newsData = [];
+
+    // Function to fetch news headlines and update the marquee
+    function fetchNews() {
+    fetch('/news')
+        .then(response => response.json())
+        .then(data => {
+        newsData = data; // Store the news headlines in an array
+        displayNews(); // Start displaying the news
+        })
+        .catch(error => {
+        console.error('Error fetching news data:', error);
+        });
+    }
+
+    // Function to display news headlines in the marquee
+    function displayNews() {
+    if (newsData.length === 0) {
+        return;
+    }
+
+    // Clear the existing marquee content
+    newsMarquee.innerHTML = '';
+
+    // Create a string with all the news headlines separated by spaces
+    const newsText = newsData.join(' ');
+
+    // Set the marquee content to the news text
+    newsMarquee.textContent = newsText;
+
+    // Schedule the next headline
+    setTimeout(displayNews, 2000); // Change the delay as needed
+    }
+
+    // Start fetching and displaying news headlines
+    fetchNews();
+
     </script>
 
 </html>
