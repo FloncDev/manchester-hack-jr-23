@@ -112,103 +112,16 @@
         <nav class="nav-bar">
             <a href="app.html">Home</a>
             <a href="market.html">Market</a>
-            <a href="leaderboard.html">Leaderboard</a>
+            <a href="news.html">News</a>
         </nav>
         <button id="logoutButton">Logout</button>
     </header>
-    
-    <div class="content-wrapper">
-        <div class="balance">
-            <h2>Balance</h2>
-            <p>Current Balance: £12,000</p>
-            <p>Change: +20%</p>
-        </div>
-
-        <div class="stocks">
-            <h2>Your Stocks</h2>
-            <ul>
-                <!-- Stocks will be populated by JS -->
-            </ul>
-        </div>
-    </div>
-
-    <div class="news-strip">
-        <h3>Recent News</h3>
-        <p>Stock A is on the rise due to...</p>
-        <p>Stock B experienced a slight drop because...</p>
-    </div>
-
-    <marquee behavior="scroll" direction="left" id="news-marquee"></marquee>
 
     <script>
-        async function fetchData() {
-            try {
-                const response = await fetch('/me');
-                const data = await response.json();
-                const initialBalance = 10000;
-
-                document.querySelector(".balance p").textContent = "Current Balance: £" + data.balance;
-
-                let percent = ((data.balance - initialBalance) / initialBalance) * 100;
-                document.querySelectorAll(".balance p")[1].textContent = `Change: ${percent.toFixed(2)}%`;
-
-                let stockList = document.querySelector('.stocks ul');
-                stockList.innerHTML = ''; 
-                for(let stock of data.stocks) {
-                    let li = document.createElement('li');
-                    li.textContent = `${stock.stock_name} - £${stock.price}/share (${stock.amount} shares)`;
-                    stockList.appendChild(li);
-                }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchData);
-
         document.getElementById('logoutButton').addEventListener('click', function() {
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.href = 'index.html';
         });
-
-        const newsMarquee = document.getElementById('news-marquee');
-    let newsData = [];
-
-    // Function to fetch news headlines and update the marquee
-    function fetchNews() {
-    fetch('/news')
-        .then(response => response.json())
-        .then(data => {
-        newsData = data; // Store the news headlines in an array
-        displayNews(); // Start displaying the news
-        })
-        .catch(error => {
-        console.error('Error fetching news data:', error);
-        });
-    }
-
-    // Function to display news headlines in the marquee
-    function displayNews() {
-    if (newsData.length === 0) {
-        return;
-    }
-
-    // Clear the existing marquee content
-    newsMarquee.innerHTML = '';
-
-    // Create a string with all the news headlines separated by spaces
-    const newsText = newsData.join(' ');
-
-    // Set the marquee content to the news text
-    newsMarquee.textContent = newsText;
-
-    // Schedule the next headline
-    setTimeout(displayNews, 2000); // Change the delay as needed
-    }
-
-    // Start fetching and displaying news headlines
-    fetchNews();
-
     </script>
 
-</html>
+</body>

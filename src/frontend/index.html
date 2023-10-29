@@ -99,11 +99,15 @@
         const loginButton = document.getElementById("login");
         const signupButton = document.getElementById("signup");
 
+        function showMessage(message) {
+            alert(message);
+        }
+
         loginButton.addEventListener("click", e => {
             const data = {
                 username: username.value,
                 password: password.value
-            }
+            };
 
             fetch("/login", {
                 method: "POST",
@@ -112,13 +116,24 @@
                     "Content-Type": "application/json"
                 }
             })
-        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'app.html';  // Redirect to app.html
+                } else {
+                    showMessage(data.message);
+                }
+            })
+            .catch(error => {
+                showMessage('Error logging in. Please try again.');
+            });
+        });
 
         signupButton.addEventListener("click", e => {
             const data = {
                 username: username.value,
                 password: password.value
-            }
+            };
 
             fetch("/user", {
                 method: "POST",
@@ -127,7 +142,18 @@
                     "Content-Type": "application/json"
                 }
             })
-        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Successfully signed up! Please log in.');
+                } else {
+                    showMessage(data.message);
+                }
+            })
+            .catch(error => {
+                showMessage('Error signing up. Please try again.');
+            });
+        });
     </script>
 
 </html>
