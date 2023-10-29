@@ -14,12 +14,12 @@ class ApiStock(BaseModel):
 
 @dataclass
 class Stock:
-    id: int
     stock_name: str
     price: float
     amount: float  # to support fractional shares
     timestamp: int  # UNIX timestamp (sqlite3 doesn't support datetime)
-    buyer_id: int | None = None  # Foriegn key for User
+    buyer_id: int | None = None  # Foriegn key fstockor User
+    id: int = None
 
 
 class User(BaseModel):

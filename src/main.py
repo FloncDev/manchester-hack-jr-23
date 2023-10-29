@@ -42,7 +42,7 @@ async def login(user: ApiUser, response: Response):
             response.set_cookie(
                 "token", token, max_age=60 * 60 * 24 * 7, secure=True, httponly=True
             )
-            return token
+            return f"Logged in as {user.username}"
 
     except Exception as e:
         print(e)
@@ -63,22 +63,30 @@ async def purchase_stock(stock: ApiStock, user_id: int = Depends(sessions.verify
     except ValueError:
         raise HTTPException(400, f"You do not have enough money required.")
 
-    return f"Purchesd {stock.amount} {stock.stock_name} stocks for {stock_price}"
-
-
-@app.get("/stocks")
-async def get_stocks(user_id: int = Depends(sessions.verify)):
-    return db.find_user_stocks(user_id)
+    return f"Purchesd {stock.amount} {stock.stock_name} stocks for {stock_price * stock.amount}"
 
 
 @app.post("/sell")
-async def sell_stock(id: int):
+async def sell_stock(id: int, user_id: int = Depends(sessions.verify)):
+    try:
+        db.sell_stock(id, user_id)
+    except ValueError as e:
+        raise HTTPException(
+            401, f"That stock either does not exist or is not owned by you. {e}"
+        )
+
+
+@app.get("/stock/{stock_name}")
+async def get_stock(stock_name: str, _: int = Depends(sessions.verify)):
+    try:
+        return await stocks.get_stock_price(stock_name)
+    except KeyError:
+        raise HTTPException(400, "Stock could not be found")
+
+
+@app.get("/news/{stock_name}")
+async def get_news(stock_name: str, _: int = Depends(sessions.verify)):
     pass
-
-
-@app.get("/test")
-async def test(user_id: int = Depends(sessions.verify)):
-    print(user_id)
 
 
 app.mount("/", StaticFiles(directory="src/frontend", html=True))
