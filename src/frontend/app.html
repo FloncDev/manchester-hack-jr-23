@@ -17,6 +17,7 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         header {
@@ -30,7 +31,8 @@
         .content-wrapper {
             display: flex;
             justify-content: space-between;
-            width: 80%;
+            width: 100%;
+            padding: 0 10%; /* Adjust this padding for desired spacing from sides */
         }
 
         .balance, .stocks, .news-strip {
@@ -39,10 +41,12 @@
             background-color: #333;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
         }
 
         .balance, .stocks {
             flex: 1;
+            margin: 20px 10px; /* Add some horizontal margin to separate the two blocks */
         }
 
         .stocks ul {
@@ -51,10 +55,9 @@
         }
 
         .news-strip {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            width: 80%;
+            box-sizing: border-box;
+            text-align: center;
         }
 
         .news-strip p {
