@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Trading App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #eaeaea;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 30px 25px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #555;
+            color: #eaeaea;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #777;
+        }
+
+        button#signup {
+            margin-left: 10px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10%; /* Adjust this padding for desired spacing from sides */
+        }
+
+        .balance, .stocks, .news-strip {
+            margin: 20px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .balance, .stocks {
+            flex: 1;
+            margin: 20px 10px; /* Add some horizontal margin to separate the two blocks */
+        }
+
+        .stocks ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .news-strip {
+            width: 80%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .news-strip p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
