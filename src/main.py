@@ -17,12 +17,16 @@ sessions = SessionManager()
 
 @app.post("/user")
 async def create_user(user: ApiUser):
+    existing_user = db.get_user_by_username(user.username)
+    if existing_user:
+        return {"success": False, "message": "Username already exists."}
+
     # Hash Password
     hashed_password = hasher.hash(user.password)
 
     db.create_user(ApiUser(username=user.username, password=hashed_password))
 
-    return hashed_password
+    return {"success": True}
 
 
 @app.get("/me")
@@ -34,7 +38,7 @@ async def get_me(user_id: int = Depends(sessions.verify)):
 async def login(user: ApiUser, response: Response):
     db_user = db.get_user_by_username(user.username)
     if db_user is None:
-        raise HTTPException(401, "Could not find user by that name")
+        return {"success": False, "message": "Could not find user by that name"}
 
     try:
         if hasher.verify(db_user.password, user.password):
@@ -42,11 +46,10 @@ async def login(user: ApiUser, response: Response):
             response.set_cookie(
                 "token", token, max_age=60 * 60 * 24 * 7, secure=True, httponly=True
             )
-            return f"Logged in as {user.username}"
-
+            return {"success": True}
     except Exception as e:
         print(e)
-        raise HTTPException(401, "Incorrect details")
+        return {"success": False, "message": "Incorrect details"}
 
 
 @app.post("/purchase")
