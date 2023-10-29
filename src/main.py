@@ -132,9 +132,14 @@ async def get_top_stocks(_: int = Depends(sessions.verify)):
     return mock_stocks
 
 
-@app.get("/news/{stock_name}")
-async def get_news(stock_name: str, _: int = Depends(sessions.verify)):
-    return ["Headline 1", "Headline 2"]
+@app.get("/news")
+async def get_news(_: int = Depends(sessions.verify)):
+    return await stocks.get_news()
+
+
+@app.get("/leaderboard")
+async def get_leaderboard(_: int = Depends(sessions.verify)):
+    return db.get_top_ten()
 
 
 app.mount("/", StaticFiles(directory="src/frontend", html=True))
