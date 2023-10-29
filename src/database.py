@@ -1,5 +1,6 @@
 import sqlite3
 from .models import User, Stock, ApiUser
+from fastapi import HTTPException
 
 
 class Database:
@@ -60,7 +61,13 @@ class Database:
             return None
         id, username, password, balance = result
 
-        return User(id=id, username=username, password=password, balance=balance)
+        return User(
+            id=id,
+            username=username,
+            password=password,
+            balance=balance,
+            stocks=self.find_user_stocks(id),
+        )
 
     def get_user_by_id(self, id: int) -> User | None:
         cur = self.conn.cursor()
@@ -76,13 +83,19 @@ class Database:
 
         id, username, password, balance = result
 
-        return User(id=id, username=username, password=password, balance=balance)
+        return User(
+            id=id,
+            username=username,
+            password=password,
+            balance=balance,
+            stocks=self.find_user_stocks(id),
+        )
 
     def find_user_stocks(self, user_id: int) -> list[Stock]:
         cur = self.conn.cursor()
         cur.execute(
             """
-            SELECT id, stock_name, price, amount, timestamp FROM Stocks WHERE buyer_id=?
+            SELECT stock_name, price, amount, timestamp, buyer_id, id FROM Stocks WHERE buyer_id=?
             """,
             (user_id,),
         )
@@ -90,7 +103,7 @@ class Database:
 
         user_stocks = []
         for stock in stocks:
-            user_stocks.append(Stock(*stock, user_id))
+            user_stocks.append(Stock(*stock))
 
         return user_stocks
 
@@ -98,6 +111,7 @@ class Database:
         total_cost = stocks.price * stocks.amount
         cur = self.conn.cursor()
         cur.execute("SELECT balance FROM Users WHERE id=?", (stocks.buyer_id,))
+
         current_balance = cur.fetchone()[0]
         if current_balance < total_cost:
             raise ValueError("Insufficient funds")
@@ -130,13 +144,27 @@ class Database:
     def sell_stock(self, stock_id: int, user_id: int):
         cur = self.conn.cursor()
 
-        cur.execute("SELECT buyer_id FROM Users WHERE buyer_id=?", stock_id)
+        print(stock_id, type(stock_id))
+        cur.execute("SELECT buyer_id FROM Stocks WHERE id=?", (stock_id,))
         buyer_id = cur.fetchone()
 
         if buyer_id is None:
             raise ValueError("Could not find stock by that id")
 
-        elif buyer_id != user_id:
-            print("User_id does not own that stock")
+        elif buyer_id[0] != user_id:
+            raise ValueError("User does not own that stock")
 
-        print(user_id)
+        stocks = self.find_user_stocks(user_id)
+        user = self.get_user_by_id(user_id)
+
+        stock = [i for i in stocks if i.id == stock_id][0]
+
+        # Remove stock from user
+        cur.execute("DELETE FROM Stocks WHERE id=?", (stock.id,))
+
+        balance = user.balance + (stock.amount * stock.price)
+        print(balance, user.balance)
+
+        cur.execute("UPDATE Users SET balance=? WHERE id=?", (balance, user_id))
+
+        self.conn.commit()

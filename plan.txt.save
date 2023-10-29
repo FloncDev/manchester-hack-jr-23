@@ -12,20 +12,19 @@ Savings:
 
 To do:
  Website
- User login
- Keep data / money
- Stock API key thing
- BUYING / SELLING STOCKS
- Current stock data
+ User login DONE
+ Keep data / money DONE
+ Stock API key thing DONE
+ BUYING / SELLING STOCKS DONE
+ Current stock data DONE
  profit (Gain/Loss)
  Graphs
  GREEN/RED Gain/loss
- Portfolio (what stocks you are currently holding)
- "GitRich"
+ Portfolio (what stocks you are currently holding) DONE
+ "GitRich" DONE
  BUY/SELL Interface:
- 	Amount / Units
-	Price
- % change each 'tick'/ 'fetch'
+ 	Amount / Units DONE
+	Price DONE
  
 	
 
