@@ -1,5 +1,5 @@
 # Manchester Hack Jr 2023
-### An AJ Bell inspired project:
+### An AJ Bell Futures Foundation inspired project:
 <br>
 
 <p align="centre">
@@ -17,8 +17,6 @@ In summary, this project is a financial education website, where the user can le
 ### The User
 <hr>
 Each user registered into our database is given upmost confidentiality, every user's session token and password is encrypted by the industry standard, cryptographically secure, hashing algorithm known as argon2.
-<br>
-<br>
 Additionally, this project utilises virtual, made-up currency. The user is not at financial risk in any way, shape or form. If the user were to lose any or all finance provided within the project, the user may restart from the starting balance, as a result any stock owned (unsold) before restarting will also be discarded.
 
 <br>
@@ -46,7 +44,7 @@ The only factor limiting the user is their financial value! As the user learns m
 <br>
 
 ### Selling
-
+Moreover, the user is also able sell the bought stock/share, hopefully for a profit. They may choose a quick and easy transaction, quickly selling any stock/share as they rise in value, or the user may prefer to hold onto the stock for an even greater return at the cost of additional time.
 
 
 <br>
@@ -54,18 +52,13 @@ The only factor limiting the user is their financial value! As the user learns m
 
 ## Leaderboard
 <hr>
-In order to add more content into the project that the user can engage with, we have added a ranking system. The users that have signed up can actively compete against eachother for the title of the greatest investor within our project's reality-based simulation (bragging rights are included). The leaderboard functions by sorting the users in descending order, the largest portfolio value to the lowest. This creates a ranking from the most prosperous user to the least valued user. This 
+In order to add more content into the project that the user can engage with, we have added a ranking system. The users that have signed up can actively compete against eachother for the title of the greatest investor within our project's reality-based simulation (bragging rights are included). The leaderboard functions by sorting the users in descending order, the largest portfolio value to the lowest. This creates a ranking from the most prosperous user to the least valued user. We believe this system is necessary for the motivation of the user.
 
 
 <br>
 <br>
 
-
-
-
-
-
-***This is a project constructed within the time frame of HacJr Manchester, given inspiration through the challenge given by AJ Bell - saving for the future.***
+***This is a project constructed within the time frame of HacJr Manchester, given inspiration through the challenge given by AJ Bell Futures Foundation- saving for the future.***
 
 
 
