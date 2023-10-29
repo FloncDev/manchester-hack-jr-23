@@ -8,8 +8,48 @@
 </head>
 <body>
     <h1>Log In</h1>    
-    <input type="text" name="Username" id="username">
-    <input type="password" name="Password" id="password">
-    <button>Log In</button>
+    <input type="text" name="Username" id="username" placeholder="Username">
+    <input type="password" name="Password" id="password" placeholder="Password">
+    <br>
+    <button id="login">Log In</button>
+    <button id="signup">Sign Up</button>
 </body>
+
+<script>
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const loginButton = document.getElementById("login");
+    const signupButton = document.getElementById("signup");
+
+    loginButton.addEventListener("click", e => {
+        data = {
+            username: username.value,
+            password: password.value
+        }
+
+        fetch("/login", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    })
+
+    signupButton.addEventListener("click", e => {
+        data = {
+            username: username.value,
+            password: password.value
+        }
+
+        fetch("/user", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    })
+</script>
+
 </html>

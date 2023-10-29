@@ -1,19 +1,6 @@
 import sqlite3
+from models import User, Stock, ApiUser
 
-class User:
-    def __init__(self, username: str, password: str, bal: float, id: int = None) -> None:
-        self.id = id
-        self.username = username
-        self.password = password
-        self.bal = bal
-
-class Stocks:
-    def __init__(self, stock_name: str, price: float, amount: float, timestamp: int, buyer_id: id = None) -> None:
-        self.stock_name = stock_name
-        self.price = price
-        self.amount = amount
-        self.timestamp = timestamp
-        self.buyer_id = buyer_id
 
 class Database:
     def __init__(self) -> None:
@@ -27,7 +14,7 @@ class Database:
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         password TEXT,
-        bal REAL
+        balance REAL
     )
             """
         )
@@ -46,65 +33,71 @@ class Database:
         )
         self.conn.commit()
 
-    def create_user(self, user: User):
+    def create_user(self, user: ApiUser):
         cur = self.conn.cursor()
         cur.execute(
             """
-            INSERT INTO Users(username,password,bal) VALUES(?,?,?)
+            INSERT INTO Users(username,password,balance) VALUES(?,?,?)
             """,
-            (user.username,
-            user.password,
-            user.bal,)
+            (
+                user.username,
+                user.password,
+                10_000,  # Default balance
+            ),
         )
         self.conn.commit()
-    
-    def get_user_by_username(self, user: User):
+
+    def get_user_by_username(self, username: str) -> User | None:
         cur = self.conn.cursor()
         cur.execute(
             """
             SELECT * FROM Users WHERE username=?
             """,
-            (user.username,)
+            (username,),
         )
         result = cur.fetchone()
-        return User(
-            result[1],
-            result[2],
-            result[3],
-            result[0]
-        )
+        if result is None:
+            return None
+        id, username, password, balance = result
 
-    def get_user_by_id(self, user: User):
+        return User(id=id, username=username, password=password, balance=balance)
+
+    def get_user_by_id(self, id: int) -> User | None:
         cur = self.conn.cursor()
         cur.execute(
             """
             SELECT * FROM Users WHERE id=?
             """,
-            (user.id,)
+            (id,),
         )
         result = cur.fetchone()
-        return User(
-            result[1],
-            result[2],
-            result[3],
-            result[0]
-        )
-    
-    def find_user_stocks(self, user: User):
+        if result is None:
+            return None
+
+        id, username, password, balance = result
+
+        return User(id=id, username=username, password=password, balance=balance)
+
+    def find_user_stocks(self, user_id: int) -> list[Stock]:
         cur = self.conn.cursor()
         cur.execute(
             """
-            SELECT stock_name, amount, timestamp FROM Stocks WHERE buyer_id=?
+            SELECT id, stock_name, price, amount, timestamp FROM Stocks WHERE buyer_id=?
             """,
-            (user.id,)
+            (user_id,),
         )
         stocks = cur.fetchall()
-        return stocks
-    
-    def buy_stock(self, stocks: Stocks):
+
+        user_stocks = []
+        for stock in stocks:
+            user_stocks.append(Stock(*stock, user_id))
+
+        return user_stocks
+
+    def buy_stock(self, stocks: Stock):
         total_cost = stocks.price * stocks.amount
         cur = self.conn.cursor()
-        cur.execute("SELECT bal FROM Users WHERE id=?", (stocks.buyer_id,))
+        cur.execute("SELECT balance FROM Users WHERE id=?", (stocks.buyer_id,))
         current_balance = cur.fetchone()[0]
         if current_balance < total_cost:
             raise ValueError("Insufficient funds")
@@ -112,19 +105,38 @@ class Database:
         new_balance = current_balance - total_cost
         cur.execute(
             """
-            UPDATE Users SET bal=? WHERE id=?
+            UPDATE Users SET balance=? WHERE id=?
             """,
-            (new_balance, stocks.buyer_id,)
+            (
+                new_balance,
+                stocks.buyer_id,
+            ),
         )
 
         cur.execute(
             """
             INSERT INTO Stocks(stock_name,price,amount,timestamp,buyer_id) VALUES(?,?,?,?,?)
             """,
-            (stocks.stock_name,
-             stocks.price,
-             stocks.amount,
-             stocks.timestamp,
-             stocks.buyer_id,)
+            (
+                stocks.stock_name,
+                stocks.price,
+                stocks.amount,
+                stocks.timestamp,
+                stocks.buyer_id,
+            ),
         )
         self.conn.commit()
+
+    def sell_stock(self, stock_id: int, user_id: int):
+        cur = self.conn.cursor()
+
+        cur.execute("SELECT buyer_id FROM Users WHERE buyer_id=?", stock_id)
+        buyer_id = cur.fetchone()
+
+        if buyer_id is None:
+            raise ValueError("Could not find stock by that id")
+
+        elif buyer_id != user_id:
+            print("User_id does not own that stock")
+
+        print(user_id)
