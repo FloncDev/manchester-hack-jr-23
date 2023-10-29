@@ -168,3 +168,14 @@ class Database:
         cur.execute("UPDATE Users SET balance=? WHERE id=?", (balance, user_id))
 
         self.conn.commit()
+
+    def get_top_ten(self):
+        cur = self.conn.cursor()
+
+        cur.execute(
+            "SELECT username, balance FROM Users ORDER BY balance DESC LIMIT 10"
+        )
+
+        data = cur.fetchall()
+
+        return data
