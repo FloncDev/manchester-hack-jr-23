@@ -23,9 +23,43 @@
         header {
             display: flex;
             justify-content: space-between;
+            align-items: center;  /* Align items vertically */
             width: 100%;
             padding: 30px 25px;
             box-sizing: border-box;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-bar a {
+            text-decoration: none;
+            color: #eaeaea;
+            padding: 10px 15px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: #555;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #555;
+            color: #eaeaea;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #777;
         }
 
         .content-wrapper {
@@ -70,6 +104,12 @@
 <body>
     <header>
         <img src="https://media.discordapp.net/attachments/1160991230210084894/1168150967489933382/gitrich.png?ex=6550b85d&is=653e435d&hm=7fdfae07b700bf3cbe78e706b6a230a5630da67a4521bf3d4546377f80f54f36&=&width=1440&height=285" alt="Logo" class="app-logo" width="150px">
+        <nav class="nav-bar">
+            <a href="app.html">Home</a>
+            <a href="market.html">Market</a>
+            <a href="news.html">News</a>
+        </nav>
+        <button id="logoutButton">Logout</button>
     </header>
     
     <div class="content-wrapper">
@@ -82,9 +122,7 @@
         <div class="stocks">
             <h2>Your Stocks</h2>
             <ul>
-                <li>Stock A - £50/share (+5%)</li>
-                <li>Stock B - £100/share (-2%)</li>
-                <!-- Add more stocks as needed -->
+                <!-- Stocks will be populated by JS -->
             </ul>
         </div>
     </div>
@@ -93,8 +131,38 @@
         <h3>Recent News</h3>
         <p>Stock A is on the rise due to...</p>
         <p>Stock B experienced a slight drop because...</p>
-        <!-- Add more news items as needed -->
     </div>
-</body>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/me');
+                const data = await response.json();
+                const initialBalance = 10000;
+
+                document.querySelector(".balance p").textContent = "Current Balance: £" + data.balance;
+
+                let percent = ((data.balance - initialBalance) / initialBalance) * 100;
+                document.querySelectorAll(".balance p")[1].textContent = `Change: ${percent.toFixed(2)}%`;
+
+                let stockList = document.querySelector('.stocks ul');
+                stockList.innerHTML = ''; 
+                for(let stock of data.stocks) {
+                    let li = document.createElement('li');
+                    li.textContent = `${stock.stock_name} - £${stock.price}/share (${stock.amount} shares)`;
+                    stockList.appendChild(li);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location.href = 'index.html';
+        });
+    </script>
 
 </html>

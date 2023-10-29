@@ -78,6 +78,10 @@ async def sell_stock(id: int, user_id: int = Depends(sessions.verify)):
             401, f"That stock either does not exist or is not owned by you. {e}"
         )
 
+@app.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie("token")
+    return {"success": True}
 
 @app.get("/stock/{stock_name}")
 async def get_stock(stock_name: str, _: int = Depends(sessions.verify)):
